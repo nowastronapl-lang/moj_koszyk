@@ -333,63 +333,125 @@ function handlePriceSearch(e) {
   if (window.lucide) lucide.createIcons();
 }
 
+// === MIESIĘCZNE GRUPOWANIE I SORTOWANIE HISTORII PARAGONÓW ===
 function renderHistory() {
-  const history = getHistory();
   const container = document.getElementById('history-list');
+  if (!container) return;
 
-  if (history.length === 0) {
-    container.innerHTML = `<p class="text-slate-500 text-sm italic text-center py-6">Brak zapisanych paragonów.</p>`;
+  const history = getHistory();
+
+  if (!history || history.length === 0) {
+    container.innerHTML = `
+      <div class="glass-card p-6 rounded-3xl text-center space-y-2">
+        <i data-lucide="receipt" class="w-8 h-8 text-slate-600 mx-auto"></i>
+        <p class="text-slate-400 text-xs italic">Brak zapisanych paragonów w historii.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
     return;
   }
 
-  container.innerHTML = history.map(item => `
-    <div class="bg-[#141c17] rounded-2xl border border-emerald-900/30 overflow-hidden transition-all shadow-md">
-      <div onclick="toggleReceiptDetails('${item.id}')" 
-           class="p-3.5 flex justify-between items-center gap-3 cursor-pointer select-none hover:bg-emerald-950/20 transition">
-        <div class="space-y-0.5 overflow-hidden">
-          <div class="flex items-center gap-2">
-            <span class="font-semibold text-sm text-white truncate">${item.store}</span>
-            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900/60 px-2 py-0.5 rounded-full shrink-0">${item.category}</span>
-          </div>
-          <p class="text-xs text-slate-400">
-            ${new Date(item.date).toLocaleDateString('pl-PL')} • ${item.items.length} poz.
-          </p>
+  // 1. Sortowanie paragonów malejąco po dacie dodania/zakupu (najnowsze na górze)
+  const sortedHistory = [...history].sort((a, b) => {
+    const dateA = new Date(a.date || a.timestamp || 0);
+    const dateB = new Date(b.date || b.timestamp || 0);
+    return dateB - dateA;
+  });
+
+  // 2. Grupowanie paragonów według miesięcy (np. "październik 2026")
+  const groupedByMonth = sortedHistory.reduce((groups, receipt) => {
+    const dateObj = new Date(receipt.date || receipt.timestamp || Date.now());
+    
+    // Formatowanie nazwy miesiąca i roku (np. "Październik 2026")
+    const monthYear = dateObj.toLocaleDateString('pl-PL', {
+      month: 'long',
+      year: 'numeric'
+    });
+    
+    const formattedMonth = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
+
+    if (!groups[formattedMonth]) {
+      groups[formattedMonth] = [];
+    }
+    groups[formattedMonth].push(receipt);
+    return groups;
+  }, {});
+
+  // 3. Renderowanie pogrupowanej i posortowanej historii
+  let html = '';
+
+  Object.keys(groupedByMonth).forEach(monthLabel => {
+    const receiptsInMonth = groupedByMonth[monthLabel];
+    
+    // Suma wydatków w danym miesiącu
+    const monthTotal = receiptsInMonth.reduce((sum, r) => sum + (Number(r.total) || 0), 0);
+
+    html += `
+      <div class="space-y-3 pt-2">
+        <!-- Nagłówek miesiąca -->
+        <div class="flex justify-between items-center px-1 border-b border-emerald-900/40 pb-1.5">
+          <h3 class="text-xs font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${monthLabel}
+          </h3>
+          <span class="text-[11px] font-bold text-slate-400 bg-slate-900/80 px-2.5 py-0.5 rounded-full border border-slate-800">
+            Suma: ${monthTotal.toFixed(2)} zł
+          </span>
         </div>
 
-        <div class="flex items-center gap-2.5 shrink-0">
-          <span class="font-bold text-emerald-400 text-sm">${item.total.toFixed(2)} zł</span>
-          <i id="arrow-${item.id}" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
-          <button onclick="deleteReceipt('${item.id}', event)" 
-                  class="text-slate-500 hover:text-rose-400 p-1 transition touch-manipulation" 
-                  title="Usuń">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
+        <!-- Lista paragonów z danego miesiąca -->
+        <div class="space-y-2.5">
+          ${receiptsInMonth.map(receipt => {
+            const receiptDate = new Date(receipt.date || receipt.timestamp || Date.now());
+            const formattedDate = receiptDate.toLocaleDateString('pl-PL', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+
+            return `
+              <div class="glass-card p-4 rounded-2xl space-y-3">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h4 class="font-extrabold text-sm text-white flex items-center gap-2">
+                      <i data-lucide="store" class="w-4 h-4 text-emerald-400"></i> ${receipt.store || 'Nieznany sklep'}
+                    </h4>
+                    <span class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <i data-lucide="clock" class="w-3 h-3"></i> ${formattedDate}
+                    </span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-sm font-black text-emerald-400 block">${Number(receipt.total || 0).toFixed(2)} zł</span>
+                    <button onclick="deleteReceipt('${receipt.id}')" class="text-slate-500 hover:text-rose-400 text-[11px] transition mt-1">
+                      Usuń
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Lista kupionych produktów w tym paragonie -->
+                <div class="bg-slate-950/60 rounded-xl p-2.5 space-y-1.5 border border-slate-900">
+                  ${(receipt.items || []).map(item => `
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="text-slate-300 font-medium truncate pr-2">${item.name}</span>
+                      <div class="text-right shrink-0">
+                        <span class="text-slate-400 text-[10px] mr-1.5">${item.qty || 1}x</span>
+                        <span class="text-slate-200 font-semibold">${Number(item.price || 0).toFixed(2)} zł</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
+    `;
+  });
 
-      <div id="details-${item.id}" class="hidden bg-[#0b100d] border-t border-emerald-900/30 p-3 space-y-2">
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kupione produkty:</div>
-        <ul class="space-y-1.5 divide-y divide-emerald-950/60">
-          ${item.items.map(product => `
-            <li class="pt-1.5 flex justify-between items-center text-xs">
-              <div class="pr-2 overflow-hidden">
-                <span class="text-slate-200 block truncate font-medium">${product.name}</span>
-                <span class="text-[10px] text-slate-500">${product.category || 'Inne'}</span>
-              </div>
-              <div class="text-right shrink-0">
-                <span class="text-slate-400 text-[11px] mr-2">x${product.qty || 1}</span>
-                <span class="font-medium text-slate-300">${(Number(product.price) || 0).toFixed(2)} zł</span>
-              </div>
-            </li>
-          `).join('')}
-        </ul>
-      </div>
-    </div>
-  `).join('');
-
+  container.innerHTML = html;
   if (window.lucide) lucide.createIcons();
 }
-
 // === MODUŁ ANALITYKI (CHART.JS) ===
 function updateAnalytics() {
   const history = getHistory();
