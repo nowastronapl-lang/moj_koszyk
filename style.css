@@ -1,0 +1,75 @@
+/* Własne drobne szlify i płynne przejścia */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Customowy pasek przewijania dla listy produktów */
+#res-items::-webkit-scrollbar {
+  width: 4px;
+}
+#res-items::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#res-items::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+/* Zabezpieczenie pod ekrany dotykowe */
+button, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Customowy pasek przewijania */
+#res-items::-webkit-scrollbar {
+  width: 4px;
+}
+#res-items::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#res-items::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+button, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#res-items::-webkit-scrollbar {
+  width: 4px;
+}
+#res-items::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#res-items::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+/* Animacja obracania strzałki */
+.arrow-rotate {
+  transition: transform 0.2s ease-in-out;
+}
+/* Wygładzanie i poprawki touch */
+button, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Właściwości paska nawigacji */
+.nav-btn.active {
+  color: #22c55e;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(11, 16, 13, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2b21;
+  border-radius: 4px;
+}
