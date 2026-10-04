@@ -40,8 +40,8 @@
           <p class="text-xs text-slate-400">Zrób zdjęcie, a Gemini AI automatycznie odczyta produkty i ceny.</p>
         </div>
 
-        <input type="file" id="receipt-input" accept="image/*" capture="environment" class="hidden">
-        
+        <input type="file" id="receipt-input" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
+
         <button onclick="document.getElementById('receipt-input').click()" 
                 class="w-full py-4 px-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold rounded-2xl shadow-lg shadow-emerald-950/60 transition flex items-center justify-center gap-2 text-base touch-manipulation">
           <i data-lucide="camera" class="w-5 h-5"></i> Zrób zdjęcie / Dodaj
