@@ -1,3 +1,17 @@
+@layer utilities {
+  .glass-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(2, 6, 23, 0.85) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .shadow-glow-emerald {
+    box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.45);
+  }
+}
+
 /* Własne drobne szlify i płynne przejścia */
 button:active {
   transform: scale(0.98);
