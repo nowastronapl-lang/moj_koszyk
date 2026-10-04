@@ -116,3 +116,16 @@ button, input {
 ::-webkit-scrollbar-thumb:hover {
   background: #3f424a;
 }
+
+/* --- OBSŁUGA ZAKŁADEK (TAB-CONTENT) --- */
+
+/* Domyślnie ukrywamy wszystkie sekcje zakładek */
+.tab-content {
+  display: none !important;
+}
+
+/* Wyświetlamy tylko aktywną zakładkę */
+.tab-content.active,
+.tab-content:not(.hidden) {
+  display: block !important;
+}
