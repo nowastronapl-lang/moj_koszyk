@@ -333,7 +333,7 @@ function handlePriceSearch(e) {
   if (window.lucide) lucide.createIcons();
 }
 
-// === MIESIĘCZNE GRUPOWANIE I SORTOWANIE HISTORII PARAGONÓW ===
+// === MIESIĘCZNA HISTORIA Z ZWIJANYMI PARAGONAMI ===
 function renderHistory() {
   const container = document.getElementById('history-list');
   if (!container) return;
@@ -351,18 +351,16 @@ function renderHistory() {
     return;
   }
 
-  // 1. Sortowanie paragonów malejąco po dacie dodania/zakupu (najnowsze na górze)
+  // 1. Sortowanie paragonów malejąco po dacie (najnowsze na samej górze)
   const sortedHistory = [...history].sort((a, b) => {
     const dateA = new Date(a.date || a.timestamp || 0);
     const dateB = new Date(b.date || b.timestamp || 0);
     return dateB - dateA;
   });
 
-  // 2. Grupowanie paragonów według miesięcy (np. "październik 2026")
+  // 2. Grupowanie paragonów według miesięcy
   const groupedByMonth = sortedHistory.reduce((groups, receipt) => {
     const dateObj = new Date(receipt.date || receipt.timestamp || Date.now());
-    
-    // Formatowanie nazwy miesiąca i roku (np. "Październik 2026")
     const monthYear = dateObj.toLocaleDateString('pl-PL', {
       month: 'long',
       year: 'numeric'
@@ -377,71 +375,84 @@ function renderHistory() {
     return groups;
   }, {});
 
-  // 3. Renderowanie pogrupowanej i posortowanej historii
+  // 3. Renderowanie eleganckiej, zwijanej listy
   let html = '';
 
   Object.keys(groupedByMonth).forEach(monthLabel => {
     const receiptsInMonth = groupedByMonth[monthLabel];
-    
-    // Suma wydatków w danym miesiącu
     const monthTotal = receiptsInMonth.reduce((sum, r) => sum + (Number(r.total) || 0), 0);
 
     html += `
-      <div class="space-y-3 pt-2">
-        <!-- Nagłówek miesiąca -->
-        <div class="flex justify-between items-center px-1 border-b border-emerald-900/40 pb-1.5">
+      <div class="space-y-2 pt-2">
+        <!-- Nagłówek Miesiąca -->
+        <div class="flex justify-between items-center px-1 border-b border-emerald-900/40 pb-1">
           <h3 class="text-xs font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
             <i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${monthLabel}
           </h3>
-          <span class="text-[11px] font-bold text-slate-400 bg-slate-900/80 px-2.5 py-0.5 rounded-full border border-slate-800">
-            Suma: ${monthTotal.toFixed(2)} zł
+          <span class="text-[10px] font-bold text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded-full border border-slate-800">
+            Miesiąc: ${monthTotal.toFixed(2)} zł
           </span>
         </div>
 
-        <!-- Lista paragonów z danego miesiąca -->
-        <div class="space-y-2.5">
+        <!-- Zwijana lista paragonów z danego miesiąca -->
+        <div class="space-y-2">
           ${receiptsInMonth.map(receipt => {
             const receiptDate = new Date(receipt.date || receipt.timestamp || Date.now());
             const formattedDate = receiptDate.toLocaleDateString('pl-PL', {
               day: '2-digit',
               month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
+              year: 'numeric'
             });
 
+            const itemCount = (receipt.items || []).length;
+
             return `
-              <div class="glass-card p-4 rounded-2xl space-y-3">
-                <div class="flex justify-between items-start">
-                  <div>
-                    <h4 class="font-extrabold text-sm text-white flex items-center gap-2">
-                      <i data-lucide="store" class="w-4 h-4 text-emerald-400"></i> ${receipt.store || 'Nieznany sklep'}
-                    </h4>
-                    <span class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
-                      <i data-lucide="clock" class="w-3 h-3"></i> ${formattedDate}
-                    </span>
+              <details class="glass-card rounded-2xl group transition overflow-hidden">
+                <!-- Pasek nagłówkowy paragonu (zwinięty widok) -->
+                <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none list-none">
+                  <div class="flex items-center gap-3 overflow-hidden">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-950/60 border border-emerald-800/40 flex items-center justify-center shrink-0 text-emerald-400">
+                      <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                      <h4 class="font-extrabold text-xs text-white truncate">${receipt.store || 'Nieznany sklep'}</h4>
+                      <p class="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
+                        <span>${formattedDate}</span>
+                        <span>•</span>
+                        <span>${itemCount}${itemCount === 1 ? 'produkt' : 'produkty'}</span>
+                      </p>
+                    </div>
                   </div>
-                  <div class="text-right">
-                    <span class="text-sm font-black text-emerald-400 block">${Number(receipt.total || 0).toFixed(2)} zł</span>
-                    <button onclick="deleteReceipt('${receipt.id}')" class="text-slate-500 hover:text-rose-400 text-[11px] transition mt-1">
-                      Usuń
+
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-xs font-black text-emerald-400">${Number(receipt.total || 0).toFixed(2)} zł</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform"></i>
+                  </div>
+                </summary>
+
+                <!-- Rozwijana lista produktów ze szczegółami -->
+                <div class="px-3.5 pb-3.5 pt-1 border-t border-slate-800/60 space-y-2 bg-slate-950/40">
+                  <div class="space-y-1.5 pt-1">
+                    ${(receipt.items || []).map(item => `
+                      <div class="flex justify-between items-center text-xs py-1 border-b border-slate-900/60 last:border-0">
+                        <span class="text-slate-300 font-medium truncate pr-2">${item.name}</span>
+                        <div class="text-right shrink-0">
+                          <span class="text-slate-500 text-[10px] mr-1.5">${item.qty || 1}x</span>
+                          <span class="text-slate-200 font-bold">${Number(item.price || 0).toFixed(2)} zł</span>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+
+                  <!-- Stopka rozwijanego paragonu z opcją usunięcia -->
+                  <div class="flex justify-between items-center pt-2 text-[10px] text-slate-500">
+                    <span>ID: #${receipt.id ? receipt.id.slice(-6) : '---'}</span>
+                    <button onclick="deleteReceipt('${receipt.id}')" class="text-rose-400 hover:text-rose-300 font-semibold transition flex items-center gap-1">
+                      <i data-lucide="trash-2" class="w-3 h-3"></i> Usuń paragon
                     </button>
                   </div>
                 </div>
-
-                <!-- Lista kupionych produktów w tym paragonie -->
-                <div class="bg-slate-950/60 rounded-xl p-2.5 space-y-1.5 border border-slate-900">
-                  ${(receipt.items || []).map(item => `
-                    <div class="flex justify-between items-center text-xs">
-                      <span class="text-slate-300 font-medium truncate pr-2">${item.name}</span>
-                      <div class="text-right shrink-0">
-                        <span class="text-slate-400 text-[10px] mr-1.5">${item.qty || 1}x</span>
-                        <span class="text-slate-200 font-semibold">${Number(item.price || 0).toFixed(2)} zł</span>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
+              </details>
             `;
           }).join('')}
         </div>
