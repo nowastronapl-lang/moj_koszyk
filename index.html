@@ -3,165 +3,286 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Mój Koszyk AI</title>
+  <title>Mój Koszyk - Skaner AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons (Darmowe, nowoczesne ikony SVG) -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0c0d0e">
 </head>
-<body class="bg-[#0c0d0e] text-slate-100 min-h-screen relative overflow-x-hidden font-sans antialiased pb-28">
+<body class="bg-[#0b100d] text-slate-100 min-h-screen font-sans antialiased pb-24 selection:bg-emerald-500 selection:text-black">
 
-  <!-- GŁÓWNY KONTENER -->
-  <div class="relative z-10 max-w-md mx-auto p-4 space-y-4">
+  <div class="max-w-md mx-auto p-4 space-y-5">
     
     <!-- Top Header -->
     <header class="flex justify-between items-center py-2">
       <div>
-        <span class="text-[11px] font-bold tracking-wider text-[#d4ff38] uppercase flex items-center gap-1">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Skaner Paragonów AI
-        </span>
-        <h1 class="text-2xl font-extrabold tracking-tight text-white">Mój Koszyk</h1>
+        <p class="text-[11px] text-emerald-400 font-semibold tracking-wider uppercase flex items-center gap-1.5">
+          Witaj ponownie <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-400"></i>
+        </p>
+        <h1 class="text-xl font-bold tracking-tight text-white">Mój Koszyk <span class="text-emerald-500">AI</span></h1>
       </div>
-      <div class="w-11 h-11 rounded-2xl bg-[#17181a] border border-[#27292d] flex items-center justify-center text-[#d4ff38]">
+      <div class="w-10 h-10 rounded-full bg-[#18221c] border border-emerald-900/60 flex items-center justify-center shadow-inner text-emerald-400">
         <i data-lucide="shopping-bag" class="w-5 h-5"></i>
       </div>
     </header>
 
-    <!-- TAB 1: EKRAN GŁÓWNY -->
-    <main id="tab-scanner" class="tab-content space-y-4">
+    <!-- TAB 1: SKANER (Ekran Główny) -->
+    <main id="tab-scanner" class="tab-content space-y-5">
       
-      <!-- WYRÓŻNIONY KAFELEK 1: Banner Skanera (Jasny / Cream Card) -->
-      <section class="card-cream p-6 shadow-2xl relative overflow-hidden space-y-4">
-        <div class="flex justify-between items-start">
-          <span class="badge-dark text-[10px] uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
-            <i data-lucide="zap" class="w-3 h-3 text-[#d4ff38]"></i> Szybki Skan
+      <!-- Banner Skanera -->
+      <section class="relative overflow-hidden bg-gradient-to-br from-[#132219] to-[#18231c] p-6 rounded-3xl border border-emerald-800/40 shadow-xl space-y-4">
+        <div class="space-y-1.5 z-10 relative">
+          <span class="inline-flex items-center gap-1 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+            <i data-lucide="zap" class="w-3 h-3"></i> Szybka Analiza
           </span>
-          <i data-lucide="arrow-up-right" class="w-6 h-6 text-slate-900"></i>
+          <h2 class="text-xl font-extrabold text-white leading-tight">Dodaj paragon<br><span class="text-emerald-400">i kontroluj wydatki</span></h2>
+          <p class="text-xs text-slate-400">Zrób zdjęcie, a Gemini AI automatycznie odczyta produkty i ceny.</p>
         </div>
 
-        <div>
-          <h2 class="text-2xl font-black text-slate-950 leading-tight">Zeskanuj paragon</h2>
-          <p class="text-xs text-slate-700 font-medium mt-1">Gemini AI automatycznie wyodrębni produkty i przydzieli kategorie.</p>
-        </div>
-
-        <input type="file" id="receipt-input" accept="image/*" class="hidden" onchange="handleReceiptUpload(event)">
-
+        <input type="file" id="receipt-input" accept="image/*" capture="environment" class="hidden">
+        
         <button onclick="document.getElementById('receipt-input').click()" 
-                class="w-full py-4 bg-slate-950 hover:bg-slate-900 text-[#d4ff38] font-extrabold rounded-2xl shadow-lg transition flex items-center justify-center gap-2 text-sm touch-manipulation">
-          <i data-lucide="camera" class="w-5 h-5"></i> Dodaj zdjęcie paragonu
+                class="w-full py-4 px-4 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold rounded-2xl shadow-lg shadow-emerald-950/60 transition flex items-center justify-center gap-2 text-base touch-manipulation">
+          <i data-lucide="camera" class="w-5 h-5"></i> Zrób zdjęcie / Dodaj
         </button>
 
-        <div id="loading-spinner" class="hidden text-slate-950 text-xs font-bold text-center py-1 flex items-center justify-center gap-2">
-          <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-slate-950"></i> Przetwarzanie przez AI...
+        <div id="loading-spinner" class="hidden text-emerald-400 text-xs font-semibold animate-pulse text-center py-1 flex items-center justify-center gap-2">
+          <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Rozpoznawanie paragonu przez AI...
         </div>
       </section>
 
-      <!-- SEKCJA DWÓCH KAFELKÓW (Jeden limonkowy wyróżniony, drugi ciemny) -->
-      <div class="grid grid-cols-2 gap-3">
-        
-        <!-- WYRÓŻNIONY KAFELEK 2: Akcent Neon Limonka -->
-        <section onclick="switchTab('compare')" class="card-lime p-5 flex flex-col justify-between h-40 cursor-pointer shadow-lg relative group">
-          <div class="flex justify-between items-start">
-            <div class="w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center text-[#d4ff38]">
-              <i data-lucide="search" class="w-4 h-4"></i>
-            </div>
-            <div class="w-7 h-7 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-950">
-              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-            </div>
-          </div>
-          <div>
-            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-800 block">Najtaniej</span>
-            <h3 class="text-base font-extrabold text-slate-950 leading-tight">Porównaj ceny</h3>
-          </div>
-        </section>
-
-        <!-- KAFELEK CIEMNY: Budżet -->
-        <section class="card-dark p-5 flex flex-col justify-between h-40">
-          <div class="flex justify-between items-start">
-            <div class="w-8 h-8 rounded-full bg-[#24262b] flex items-center justify-center text-[#d4ff38]">
-              <i data-lucide="piggy-bank" class="w-4 h-4"></i>
-            </div>
-            <span id="budget-percent" class="text-[10px] font-extrabold text-[#d4ff38] bg-[#24262b] px-2 py-0.5 rounded-full">0%</span>
-          </div>
-          <div>
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Wydano</span>
-            <p id="budget-spent" class="text-lg font-extrabold text-white">0.00 zł</p>
-            <p class="text-[10px] text-slate-500 font-medium">z <span id="budget-limit-display">1500 zł</span></p>
-          </div>
-        </section>
-
-      </div>
-
-      <!-- PODGLĄD OSTATNIEGO SKANU -->
-      <section id="scan-result" class="hidden card-dark p-5 space-y-3">
-        <div class="flex justify-between items-start border-b border-[#27292d] pb-3">
+      <!-- Podgląd Aktualnego Skanu (Widoczny tylko po zeskanowaniu) -->
+      <section id="scan-result" class="hidden bg-[#141c17] p-5 rounded-3xl border border-emerald-500/30 space-y-3 shadow-lg">
+        <div class="flex justify-between items-start border-b border-emerald-900/40 pb-3">
           <div>
             <h3 id="res-store" class="text-base font-bold text-white">---</h3>
             <p id="res-address" class="text-[11px] text-slate-400">---</p>
           </div>
           <div class="text-right">
-            <span id="res-total" class="text-lg font-black text-[#d4ff38]">0.00 PLN</span>
-            <span id="res-category" class="block text-[10px] bg-[#24262b] text-[#d4ff38] px-2 py-0.5 rounded-full mt-1 font-semibold">---</span>
+            <span id="res-total" class="text-lg font-black text-emerald-400">0.00 PLN</span>
+            <span id="res-category" class="block text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded-full mt-1 font-medium">---</span>
           </div>
         </div>
+
         <div class="space-y-2">
           <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Wykryte pozycje:</h4>
-          <ul id="res-items" class="text-xs divide-y divide-[#27292d] max-h-40 overflow-y-auto pr-1"></ul>
+          <ul id="res-items" class="text-xs divide-y divide-slate-800 max-h-40 overflow-y-auto pr-1"></ul>
         </div>
       </section>
 
-      <!-- HISTORIA / RECENT LIST -->
-      <section class="space-y-2.5 pt-2">
+      <!-- KARTY STATYSTYK Z BUDŻETEM MIESIĘCZNYM -->
+      <section class="space-y-3">
+        <!-- Budżet Miesięczny (Progress Bar) -->
+        <div class="bg-[#141c17] p-4 rounded-3xl border border-emerald-900/30 space-y-2.5 shadow-lg">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <div class="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
+                <i data-lucide="piggy-bank" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider block">Budżet na ten miesiąc</span>
+                <div class="flex items-baseline gap-1">
+                  <span id="budget-spent" class="text-base font-black text-white">0.00 zł</span>
+                  <span class="text-xs text-slate-500">/</span>
+                  <button onclick="setMonthlyBudget()" class="text-xs text-slate-400 font-semibold hover:text-emerald-400 transition flex items-center gap-1 group">
+                    <span id="budget-limit-display">1500 zł</span>
+                    <i data-lucide="pencil" class="w-3 h-3 text-slate-500 group-hover:text-emerald-400"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <span id="budget-percent" class="text-xs font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-800/50 px-2.5 py-1 rounded-full">
+              0%
+            </span>
+          </div>
+
+          <!-- Pasek Postępu -->
+          <div class="w-full bg-slate-900/80 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-800/80">
+            <div id="budget-progress-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Mini karty (Suma + Liczba paragonów) -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-[#141c17] p-3.5 rounded-2xl border border-emerald-900/30 space-y-1">
+            <div class="flex items-center gap-1.5 text-slate-400 text-[11px]">
+              <i data-lucide="wallet" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Wydatki ogółem</span>
+            </div>
+            <p id="home-total-spent" class="text-base font-black text-white">0.00 zł</p>
+          </div>
+
+          <div class="bg-[#141c17] p-3.5 rounded-2xl border border-emerald-900/30 space-y-1">
+            <div class="flex items-center gap-1.5 text-slate-400 text-[11px]">
+              <i data-lucide="shopping-cart" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Zeskanowane</span>
+            </div>
+            <p id="home-receipt-count" class="text-base font-black text-white">0 paragonów</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- OSTATNIE PARAGONY (Preview) -->
+      <section class="space-y-3">
         <div class="flex justify-between items-center px-1">
-          <h3 class="text-xs font-extrabold text-white uppercase tracking-wider flex items-center gap-1.5">
-            <i data-lucide="clock" class="w-3.5 h-3.5 text-[#d4ff38]"></i> Ostatnie zakupy
+          <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <i data-lucide="clock" class="w-4 h-4 text-emerald-400"></i> Ostatnie zakupy
           </h3>
-          <button onclick="switchTab('history')" class="text-xs text-[#d4ff38] font-bold hover:underline flex items-center gap-0.5">
+          <button onclick="switchTab('history')" class="text-xs text-emerald-400 hover:underline flex items-center gap-0.5 font-medium">
             Zobacz wszystkie <i data-lucide="chevron-right" class="w-3 h-3"></i>
           </button>
         </div>
 
         <div id="home-recent-list" class="space-y-2">
-          <p class="text-slate-500 text-xs italic text-center py-4 card-dark">Brak ostatnich paragonów.</p>
+          <p class="text-slate-500 text-xs italic text-center py-4 bg-[#141c17] rounded-2xl border border-emerald-900/20">Brak ostatnich paragonów.</p>
         </div>
       </section>
 
     </main>
 
-    <!-- INNE ZAKŁADKI (HISTORIA, SHOPPING, ETC.) -->
-    <!-- ... Podstawowa struktura reszty zakładek z klasą .card-dark ... -->
 
+    <!-- TAB 2: PORÓWNYWARKA -->
+    <main id="tab-compare" class="tab-content hidden space-y-4">
+      <section class="bg-[#141c17] p-5 rounded-3xl border border-emerald-900/40 space-y-3 shadow-lg">
+        <div class="space-y-1">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="search" class="w-4 h-4 text-emerald-400"></i> Porównywarka Cen
+          </h2>
+          <p class="text-xs text-slate-400">Sprawdź, w którym sklepie kupisz najtaniej.</p>
+        </div>
+
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5"></i>
+          <input type="text" id="price-search-input" placeholder="Wpisz np. Chleb, Mleko, Masło..." 
+                 class="w-full bg-[#0b100d] border border-emerald-900/60 rounded-2xl pl-10 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+        </div>
+
+        <div id="price-comparison-results" class="space-y-2 hidden"></div>
+      </section>
+    </main>
+
+
+    <!-- TAB 3: ANALITYKA -->
+    <main id="tab-analytics" class="tab-content hidden space-y-4">
+      <section id="analytics-section" class="bg-[#141c17] p-5 rounded-3xl border border-emerald-900/40 space-y-4 shadow-lg">
+        <div class="flex justify-between items-center border-b border-emerald-900/40 pb-3">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Podsumowanie Wydatków
+            </h2>
+            <p class="text-xs text-slate-400">Podział według kategorii</p>
+          </div>
+          <span id="total-spent-badge" class="text-xs font-bold text-emerald-400 bg-emerald-950 px-3 py-1.5 rounded-full border border-emerald-800">0.00 zł</span>
+        </div>
+        <div class="relative w-full max-w-[240px] mx-auto py-2">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </section>
+    </main>
+
+
+    <!-- TAB 4: HISTORIA -->
+    <main id="tab-history" class="tab-content hidden space-y-4">
+      <section class="space-y-3">
+        <div class="flex justify-between items-center px-1">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="receipt" class="w-4 h-4 text-emerald-400"></i> Historia Paragonów
+          </h2>
+          <button id="clear-history-btn" class="text-xs text-rose-400 hover:text-rose-300 transition flex items-center gap-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Wyczyść
+          </button>
+        </div>
+        
+        <div id="history-list" class="space-y-2.5">
+          <p class="text-slate-500 text-sm italic text-center py-6">Brak zapisanych paragonów.</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 5: LISTA ZAKUPÓW -->
+<section id="tab-shopping" class="tab-content space-y-4 hidden">
+  <!-- Formularz dodawania -->
+  <div class="glass-card p-5 rounded-3xl space-y-3 shadow-card">
+    <div class="flex justify-between items-center">
+      <h2 class="text-base font-bold text-white flex items-center gap-2">
+        <i data-lucide="list-checks" class="w-4 h-4 text-emerald-400"></i> Lista Zakupów
+      </h2>
+      <span id="shopping-estimated-total" class="text-xs font-black text-emerald-400 bg-emerald-950/80 border border-emerald-800/60 px-3 py-1 rounded-full">
+        Suma: 0.00 zł
+      </span>
+    </div>
+
+    <form id="shopping-form" onsubmit="addShoppingItem(event)" class="space-y-2">
+  <div class="relative flex gap-2">
+    <div class="relative flex-1">
+      <input type="text" id="shopping-input" placeholder="np. Chleb, Masło, Mleko..." autocomplete="off" required
+             class="w-full bg-slate-950/80 border border-emerald-900/50 rounded-2xl py-3 px-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+      
+      <!-- Rozwijana lista inteligentnych podpowiedzi -->
+      <div id="shopping-suggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-slate-900/95 border border-emerald-800/60 rounded-2xl shadow-2xl z-50 max-h-48 overflow-y-auto backdrop-blur-xl divide-y divide-slate-800/40">
+        <!-- Wstrzykiwane z JS -->
+      </div>
+    </div>
+
+    <button type="submit" 
+            class="px-4 bg-gradient-to-r from-emerald-500 to-emerald-400 text-slate-950 font-extrabold rounded-2xl shadow-glow-emerald hover:from-emerald-400 hover:to-emerald-300 transition flex items-center justify-center shrink-0">
+      <i data-lucide="plus" class="w-5 h-5 stroke-[3]"></i>
+    </button>
+  </div>
+</form>
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto bg-[#17181a]/90 backdrop-blur-xl border border-[#27292d] rounded-3xl p-2 z-50 shadow-2xl">
-    <div class="flex justify-around items-center">
+  <!-- Sekcja Do kupienia -->
+  <div class="space-y-2">
+    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Do kupienia</h3>
+    <div id="shopping-pending-list" class="space-y-2">
+      <!-- Wpisy wstrzykiwane z JS -->
+    </div>
+  </div>
+
+    <!-- Sekcja Kupione -->
+    <div id="shopping-completed-section" class="space-y-2 pt-2 hidden">
+      <div class="flex justify-between items-center px-1">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Kupione</h3>
+        <button onclick="clearCompletedShoppingItems()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold transition">
+          Usuń kupione
+        </button>
+      </div>
+      <div id="shopping-completed-list" class="space-y-2 opacity-60">
+        <!-- Kupione wpisy wstrzykiwane z JS -->
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- Bottom Navigation Bar z Wektorowymi Ikonami -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-[#121814]/95 backdrop-blur-md border-t border-emerald-900/30 px-6 py-2.5 z-50">
+    <div class="max-w-md mx-auto flex justify-between items-center">
       
-      <button onclick="switchTab('scanner')" id="nav-scanner" class="nav-btn active flex flex-col items-center gap-1 p-2 rounded-2xl text-[#d4ff38] transition">
+      <button onclick="switchTab('scanner')" id="nav-scanner" class="nav-btn active flex flex-col items-center gap-1 text-emerald-400 transition">
         <i data-lucide="camera" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold">Skaner</span>
+        <span class="text-[10px] font-medium">Skaner</span>
       </button>
 
-      <button onclick="switchTab('compare')" id="nav-compare" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-2xl text-slate-400 hover:text-white transition">
+      <button onclick="switchTab('compare')" id="nav-compare" class="nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition">
         <i data-lucide="search" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold">Szukaj</span>
+        <span class="text-[10px] font-medium">Szukaj</span>
       </button>
 
-      <button onclick="switchTab('shopping')" id="nav-shopping" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-2xl text-slate-400 hover:text-white transition">
+      <button id="nav-shopping" onclick="switchTab('shopping')" class="nav-btn text-slate-500 flex flex-col items-center gap-1 py-1.5 px-3 rounded-2xl transition">
         <i data-lucide="list-checks" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold">Lista</span>
+        <span class="text-[10px] font-bold">Lista</span>
       </button>
 
-      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-2xl text-slate-400 hover:text-white transition">
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition">
         <i data-lucide="pie-chart" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold">Analityka</span>
+        <span class="text-[10px] font-medium">Analityka</span>
       </button>
 
-      <button onclick="switchTab('history')" id="nav-history" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-2xl text-slate-400 hover:text-white transition">
+      <button onclick="switchTab('history')" id="nav-history" class="nav-btn flex flex-col items-center gap-1 text-slate-500 hover:text-slate-300 transition">
         <i data-lucide="receipt" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold">Historia</span>
+        <span class="text-[10px] font-medium">Historia</span>
       </button>
 
     </div>
@@ -169,8 +290,5 @@
 
   <script src="gemini-parser.js"></script>
   <script src="app.js"></script>
-  <script>
-    lucide.createIcons();
-  </script>
 </body>
 </html>

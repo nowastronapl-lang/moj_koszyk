@@ -16,45 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
 
   document.getElementById('receipt-input').addEventListener('change', handleReceiptUpload);
-// ✅ Bezpieczny kod:
-const btn = document.getElementById('jakis-przycisk');
-if (btn) {
-  btn.addEventListener('click', (e) => {
-    // Twoja logika
-  });
-}
+  document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
   document.getElementById('price-search-input').addEventListener('input', handlePriceSearch);
 });
 
 // === NAWIGACJA ZAKŁADKAMI ===
 function switchTab(tabName) {
-  // Ukryj wszystkie zakładki
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  
-  // Zresetuj kolory nawigacji (usuń stare i nowe akcenty)
   document.querySelectorAll('.nav-btn').forEach(el => {
-    el.classList.remove('active', 'text-[#d4ff38]', 'text-emerald-400');
-    el.classList.add('text-slate-400');
+    el.classList.remove('text-emerald-400');
+    el.classList.add('text-slate-500');
   });
 
-  // Pokaż wybraną zakładkę
-  const targetTab = document.getElementById(`tab-${tabName}`);
-  if (targetTab) {
-    targetTab.classList.remove('hidden');
-  }
-
-  // Aktywuj przycisk w nawigacji z limonkowym akcentem
+  document.getElementById(`tab-${tabName}`).classList.remove('hidden');
   const activeBtn = document.getElementById(`nav-${tabName}`);
-  if (activeBtn) {
-    activeBtn.classList.remove('text-slate-400', 'text-slate-500');
-    activeBtn.classList.add('active', 'text-[#d4ff38]');
-  }
+  activeBtn.classList.remove('text-slate-500');
+  activeBtn.classList.add('text-emerald-400');
 
-  // Odśwież wykresy, jeśli przełączamy na analitykę
-  if (tabName === 'analytics' && typeof updateAnalytics === 'function') {
+  if (tabName === 'analytics') {
     updateAnalytics();
   }
 }
+
 async function handleReceiptUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -350,136 +333,63 @@ function handlePriceSearch(e) {
   if (window.lucide) lucide.createIcons();
 }
 
-// === MIESIĘCZNA HISTORIA Z ZWIJANYMI PARAGONAMI ===
 function renderHistory() {
-  const container = document.getElementById('history-list');
-  if (!container) return;
-
   const history = getHistory();
+  const container = document.getElementById('history-list');
 
-  if (!history || history.length === 0) {
-    container.innerHTML = `
-      <div class="glass-card p-6 rounded-3xl text-center space-y-2">
-        <i data-lucide="receipt" class="w-8 h-8 text-slate-600 mx-auto"></i>
-        <p class="text-slate-400 text-xs italic">Brak zapisanych paragonów w historii.</p>
-      </div>
-    `;
-    if (window.lucide) lucide.createIcons();
+  if (history.length === 0) {
+    container.innerHTML = `<p class="text-slate-500 text-sm italic text-center py-6">Brak zapisanych paragonów.</p>`;
     return;
   }
 
-  // 1. Sortowanie paragonów malejąco po dacie (najnowsze na samej górze)
-  const sortedHistory = [...history].sort((a, b) => {
-    const dateA = new Date(a.date || a.timestamp || 0);
-    const dateB = new Date(b.date || b.timestamp || 0);
-    return dateB - dateA;
-  });
-
-  // 2. Grupowanie paragonów według miesięcy
-  const groupedByMonth = sortedHistory.reduce((groups, receipt) => {
-    const dateObj = new Date(receipt.date || receipt.timestamp || Date.now());
-    const monthYear = dateObj.toLocaleDateString('pl-PL', {
-      month: 'long',
-      year: 'numeric'
-    });
-    
-    const formattedMonth = monthYear.charAt(0).toUpperCase() + monthYear.slice(1);
-
-    if (!groups[formattedMonth]) {
-      groups[formattedMonth] = [];
-    }
-    groups[formattedMonth].push(receipt);
-    return groups;
-  }, {});
-
-  // 3. Renderowanie eleganckiej, zwijanej listy
-  let html = '';
-
-  Object.keys(groupedByMonth).forEach(monthLabel => {
-    const receiptsInMonth = groupedByMonth[monthLabel];
-    const monthTotal = receiptsInMonth.reduce((sum, r) => sum + (Number(r.total) || 0), 0);
-
-    html += `
-      <div class="space-y-2 pt-2">
-        <!-- Nagłówek Miesiąca -->
-        <div class="flex justify-between items-center px-1 border-b border-emerald-900/40 pb-1">
-          <h3 class="text-xs font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${monthLabel}
-          </h3>
-          <span class="text-[10px] font-bold text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded-full border border-slate-800">
-            Miesiąc: ${monthTotal.toFixed(2)} zł
-          </span>
+  container.innerHTML = history.map(item => `
+    <div class="bg-[#141c17] rounded-2xl border border-emerald-900/30 overflow-hidden transition-all shadow-md">
+      <div onclick="toggleReceiptDetails('${item.id}')" 
+           class="p-3.5 flex justify-between items-center gap-3 cursor-pointer select-none hover:bg-emerald-950/20 transition">
+        <div class="space-y-0.5 overflow-hidden">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-sm text-white truncate">${item.store}</span>
+            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900/60 px-2 py-0.5 rounded-full shrink-0">${item.category}</span>
+          </div>
+          <p class="text-xs text-slate-400">
+            ${new Date(item.date).toLocaleDateString('pl-PL')} • ${item.items.length} poz.
+          </p>
         </div>
 
-        <!-- Zwijana lista paragonów z danego miesiąca -->
-        <div class="space-y-2">
-          ${receiptsInMonth.map(receipt => {
-            const receiptDate = new Date(receipt.date || receipt.timestamp || Date.now());
-            const formattedDate = receiptDate.toLocaleDateString('pl-PL', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            });
-
-            const itemCount = (receipt.items || []).length;
-
-            return `
-              <details class="glass-card rounded-2xl group transition overflow-hidden">
-                <!-- Pasek nagłówkowy paragonu (zwinięty widok) -->
-                <summary class="p-3.5 flex justify-between items-center cursor-pointer select-none list-none">
-                  <div class="flex items-center gap-3 overflow-hidden">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-950/60 border border-emerald-800/40 flex items-center justify-center shrink-0 text-emerald-400">
-                      <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                      <h4 class="font-extrabold text-xs text-white truncate">${receipt.store || 'Nieznany sklep'}</h4>
-                      <p class="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
-                        <span>${formattedDate}</span>
-                        <span>•</span>
-                        <span>${itemCount}${itemCount === 1 ? 'produkt' : 'produkty'}</span>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="flex items-center gap-2 shrink-0">
-                    <span class="text-xs font-black text-emerald-400">${Number(receipt.total || 0).toFixed(2)} zł</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform"></i>
-                  </div>
-                </summary>
-
-                <!-- Rozwijana lista produktów ze szczegółami -->
-                <div class="px-3.5 pb-3.5 pt-1 border-t border-slate-800/60 space-y-2 bg-slate-950/40">
-                  <div class="space-y-1.5 pt-1">
-                    ${(receipt.items || []).map(item => `
-                      <div class="flex justify-between items-center text-xs py-1 border-b border-slate-900/60 last:border-0">
-                        <span class="text-slate-300 font-medium truncate pr-2">${item.name}</span>
-                        <div class="text-right shrink-0">
-                          <span class="text-slate-500 text-[10px] mr-1.5">${item.qty || 1}x</span>
-                          <span class="text-slate-200 font-bold">${Number(item.price || 0).toFixed(2)} zł</span>
-                        </div>
-                      </div>
-                    `).join('')}
-                  </div>
-
-                  <!-- Stopka rozwijanego paragonu z opcją usunięcia -->
-                  <div class="flex justify-between items-center pt-2 text-[10px] text-slate-500">
-                    <span>ID: #${receipt.id ? receipt.id.slice(-6) : '---'}</span>
-                    <button onclick="deleteReceipt('${receipt.id}')" class="text-rose-400 hover:text-rose-300 font-semibold transition flex items-center gap-1">
-                      <i data-lucide="trash-2" class="w-3 h-3"></i> Usuń paragon
-                    </button>
-                  </div>
-                </div>
-              </details>
-            `;
-          }).join('')}
+        <div class="flex items-center gap-2.5 shrink-0">
+          <span class="font-bold text-emerald-400 text-sm">${item.total.toFixed(2)} zł</span>
+          <i id="arrow-${item.id}" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+          <button onclick="deleteReceipt('${item.id}', event)" 
+                  class="text-slate-500 hover:text-rose-400 p-1 transition touch-manipulation" 
+                  title="Usuń">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
         </div>
       </div>
-    `;
-  });
 
-  container.innerHTML = html;
+      <div id="details-${item.id}" class="hidden bg-[#0b100d] border-t border-emerald-900/30 p-3 space-y-2">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kupione produkty:</div>
+        <ul class="space-y-1.5 divide-y divide-emerald-950/60">
+          ${item.items.map(product => `
+            <li class="pt-1.5 flex justify-between items-center text-xs">
+              <div class="pr-2 overflow-hidden">
+                <span class="text-slate-200 block truncate font-medium">${product.name}</span>
+                <span class="text-[10px] text-slate-500">${product.category || 'Inne'}</span>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="text-slate-400 text-[11px] mr-2">x${product.qty || 1}</span>
+                <span class="font-medium text-slate-300">${(Number(product.price) || 0).toFixed(2)} zł</span>
+              </div>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    </div>
+  `).join('');
+
   if (window.lucide) lucide.createIcons();
 }
+
 // === MODUŁ ANALITYKI (CHART.JS) ===
 function updateAnalytics() {
   const history = getHistory();
@@ -802,22 +712,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
-
-// Rejestracja Service Workera dla auto-aktualizacji PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then((reg) => {
-      // Sprawdzaj dostępność nowej wersji przy każdym otwarciu
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // Natychmiastowe przeładowanie do nowej wersji po pushu
-            window.location.reload();
-          }
-        });
-      });
-    });
-  });
-}

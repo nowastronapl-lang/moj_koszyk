@@ -1,145 +1,75 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Podstawowe ustawienia tła i fontu */
-body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #0c0d0e;
-  color: #f1f5f9;
-}
-
-/* --- KARTY I KAFELKI --- */
-
-/* Jasno-kremowa karta (Główny wyróżniony kafelek) */
-.card-cream {
-  background-color: #e8ecc8;
-  color: #0c0d0e;
-  border-radius: 1.5rem;
-}
-
-/* Wyróżniona karta w kolorze neonowej limetki */
-.card-lime {
-  background-color: #d4ff38;
-  color: #0c0d0e;
-  border-radius: 1.5rem;
-}
-
-/* Ciemna, matowa karta z subtelnym obramowaniem */
-.card-dark {
-  background-color: #17181a;
-  border: 1px solid #27292d;
-  border-radius: 1.5rem;
-}
-
-/* Zachowanie kompatybilności z klasą glass-card */
-.glass-card {
-  background-color: #17181a;
-  border: 1px solid #27292d;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-}
-
-/* --- PRZYCISKI I AKCENTY --- */
-
-/* Neonowo-limonkowy przycisk */
-.btn-lime {
-  background-color: #d4ff38;
-  color: #0c0d0e;
-  font-weight: 800;
-  border-radius: 1.25rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-lime:active {
-  transform: scale(0.97);
-  background-color: #c2f028;
-}
-
-/* Efekty wciśnięcia dla interaktywnych elementów */
+/* Własne drobne szlify i płynne przejścia */
 button:active {
   transform: scale(0.98);
 }
 
+/* Customowy pasek przewijania dla listy produktów */
+#res-items::-webkit-scrollbar {
+  width: 4px;
+}
+#res-items::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#res-items::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+/* Zabezpieczenie pod ekrany dotykowe */
 button, input {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Kolory tekstu i znaczników (Badge) */
-.text-lime {
-  color: #d4ff38;
+/* Customowy pasek przewijania */
+#res-items::-webkit-scrollbar {
+  width: 4px;
+}
+#res-items::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#res-items::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+button, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.badge-lime {
-  background-color: #d4ff38;
-  color: #0c0d0e;
-  font-weight: 700;
+#res-items::-webkit-scrollbar {
+  width: 4px;
+}
+#res-items::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#res-items::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
 }
 
-.badge-dark {
-  background-color: #24262b;
-  color: #d4ff38;
-}
-
-/* --- NAWIGACJA DOLNA --- */
-.nav-btn {
-  transition: color 0.2s ease, transform 0.15s ease;
-}
-
-.nav-btn.active {
-  color: #d4ff38;
-}
-
-/* --- INTERFEJS I ANIMACJE --- */
+/* Animacja obracania strzałki */
 .arrow-rotate {
   transition: transform 0.2s ease-in-out;
 }
-
-/* Customowe paski przewijania */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+/* Wygładzanie i poprawki touch */
+button, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-::-webkit-scrollbar-track {
-  background: #0c0d0e;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #27292d;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #3f424a;
-}
-
-/* --- OBSŁUGA ZAKŁADEK (TAB-CONTENT) --- */
-
-/* Domyślnie ukrywamy wszystkie sekcje zakładek */
-.tab-content {
-  display: none !important;
-}
-
-/* Wyświetlamy tylko aktywną zakładkę */
-.tab-content.active,
-.tab-content:not(.hidden) {
-  display: block !important;
-}
-
-/* --- OBSŁUGA WIDOCZNOŚCI ZAKŁADEK --- */
-.tab-content.hidden {
-  display: none !important;
-}
-
-.tab-content:not(.hidden) {
-  display: block !important;
-}
-
-/* Przycisk aktywny w nawigacji */
+/* Właściwości paska nawigacji */
 .nav-btn.active {
-  color: #d4ff38 !important;
+  color: #22c55e;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(11, 16, 13, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2b21;
+  border-radius: 4px;
 }
