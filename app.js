@@ -727,7 +727,7 @@ function initProfileTab() {
 
   const baseUrl = "https://mojkoszyk.vercel.app";
   if (linkInput) {
-    linkInput.value = `https://budzet.app/join?code=${currentSyncCode}`;
+    linkInput.value = `https://mojkoszyk.vercel.app/join?code=${currentSyncCode}`;
   }
   if (codeDisplay) {
     codeDisplay.textContent = currentSyncCode;
