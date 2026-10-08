@@ -22,22 +22,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // === NAWIGACJA ZAKŁADKAMI ===
 function switchTab(tabName) {
+  // Ukryj wszystkie zakładki
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  
+  // Zresetuj kolory nawigacji (usuń stare i nowe akcenty)
   document.querySelectorAll('.nav-btn').forEach(el => {
-    el.classList.remove('text-emerald-400');
-    el.classList.add('text-slate-500');
+    el.classList.remove('active', 'text-[#d4ff38]', 'text-emerald-400');
+    el.classList.add('text-slate-400');
   });
 
-  document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-  const activeBtn = document.getElementById(`nav-${tabName}`);
-  activeBtn.classList.remove('text-slate-500');
-  activeBtn.classList.add('text-emerald-400');
+  // Pokaż wybraną zakładkę
+  const targetTab = document.getElementById(`tab-${tabName}`);
+  if (targetTab) {
+    targetTab.classList.remove('hidden');
+  }
 
-  if (tabName === 'analytics') {
+  // Aktywuj przycisk w nawigacji z limonkowym akcentem
+  const activeBtn = document.getElementById(`nav-${tabName}`);
+  if (activeBtn) {
+    activeBtn.classList.remove('text-slate-400', 'text-slate-500');
+    activeBtn.classList.add('active', 'text-[#d4ff38]');
+  }
+
+  // Odśwież wykresy, jeśli przełączamy na analitykę
+  if (tabName === 'analytics' && typeof updateAnalytics === 'function') {
     updateAnalytics();
   }
 }
-
 async function handleReceiptUpload(event) {
   const file = event.target.files[0];
   if (!file) return;

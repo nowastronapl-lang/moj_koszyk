@@ -129,3 +129,17 @@ button, input {
 .tab-content:not(.hidden) {
   display: block !important;
 }
+
+/* --- OBSŁUGA WIDOCZNOŚCI ZAKŁADEK --- */
+.tab-content.hidden {
+  display: none !important;
+}
+
+.tab-content:not(.hidden) {
+  display: block !important;
+}
+
+/* Przycisk aktywny w nawigacji */
+.nav-btn.active {
+  color: #d4ff38 !important;
+}
