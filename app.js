@@ -16,7 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
 
   document.getElementById('receipt-input').addEventListener('change', handleReceiptUpload);
-  document.getElementById('clear-history-btn').addEventListener('click', clearHistory);
+// ✅ Bezpieczny kod:
+const btn = document.getElementById('jakis-przycisk');
+if (btn) {
+  btn.addEventListener('click', (e) => {
+    // Twoja logika
+  });
+}
   document.getElementById('price-search-input').addEventListener('input', handlePriceSearch);
 });
 
