@@ -725,6 +725,7 @@ function initProfileTab() {
   const linkInput = document.getElementById('share-link-input');
   const codeDisplay = document.getElementById('sync-code-display');
 
+  const baseUrl = "https://mojkoszyk.vercel.app";
   if (linkInput) {
     linkInput.value = `https://budzet.app/join?code=${currentSyncCode}`;
   }
