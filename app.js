@@ -1,6 +1,16 @@
 // === WKLEJ SWÓJ KLUCZ API GEMINI ===
 const GEMINI_API_KEY = "AQ.Ab8RN6KFDRj8brSF8B5l-fgW6YDxcX83RJanClQycaqeK4aBtw";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyDA3nJWbDgSe2Z31PioJspqMvuSt0tEUcY",
+  authDomain: "moj-koszyk-app.firebaseapp.com",
+  databaseURL: "https://moj-koszyk-app-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "moj-koszyk-app",
+  storageBucket: "moj-koszyk-app.firebasestorage.app",
+  messagingSenderId: "158379518260",
+  appId: "1:158379518260:web:e576d0a89163d75ee31d61",
+  measurementId: "G-XH32GE9VWZ"
+};
 
 const STORAGE_KEY = 'moj_koszyk_history';
 const BUDGET_KEY = 'moj_koszyk_monthly_budget';
@@ -8,6 +18,7 @@ const SYNC_CODE_KEY = 'moj_koszyk_sync_code';
 
 let categoryChart = null;
 let currentSyncCode = localStorage.getItem(SYNC_CODE_KEY) || 'SYNC-8921';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   renderHistory();
