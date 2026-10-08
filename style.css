@@ -1,89 +1,68 @@
-@layer utilities {
-  .glass-card {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(2, 6, 23, 0.85) 100%);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(16, 185, 129, 0.15);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  }
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap');
 
-  .shadow-glow-emerald {
-    box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.45);
-  }
+:root {
+  --bg-dark: #0D0E10;
+  --card-dark: #16181D;
+  --card-border: #262930;
+  --neon-lime: #D4FF00;
+  --neon-hover: #c4ee00;
+  --text-main: #FFFFFF;
+  --text-muted: #8E95A5;
 }
 
-/* Własne drobne szlify i płynne przejścia */
-button:active {
-  transform: scale(0.98);
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
 }
 
-/* Customowy pasek przewijania dla listy produktów */
-#res-items::-webkit-scrollbar {
-  width: 4px;
-}
-#res-items::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-}
-#res-items::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
-}
-/* Zabezpieczenie pod ekrany dotykowe */
-button, input {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+.font-handwriting {
+  font-family: 'Caveat', cursive;
 }
 
-/* Customowy pasek przewijania */
-#res-items::-webkit-scrollbar {
-  width: 4px;
-}
-#res-items::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-}
-#res-items::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
-}
-button, input {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+/* KARTY NEOBRUTALIST */
+.neo-card {
+  background-color: var(--card-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 1.75rem; /* 28px */
 }
 
-#res-items::-webkit-scrollbar {
-  width: 4px;
-}
-#res-items::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
-}
-#res-items::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+.neo-card-lime {
+  background-color: var(--neon-lime);
+  color: #0D0E10;
+  border-radius: 1.75rem;
 }
 
-/* Animacja obracania strzałki */
-.arrow-rotate {
-  transition: transform 0.2s ease-in-out;
-}
-/* Wygładzanie i poprawki touch */
-button, input {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+/* NEON BUTTONS */
+.btn-lime {
+  background-color: var(--neon-lime);
+  color: #0D0E10;
+  font-weight: 900;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Właściwości paska nawigacji */
-.nav-btn.active {
-  color: #22c55e;
+.btn-lime:hover {
+  background-color: var(--neon-hover);
+  transform: translateY(-1px);
 }
 
-/* Custom Scrollbar */
+.btn-lime:active {
+  transform: scale(0.97);
+}
+
+/* CUSTOM SCROLLBAR */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(11, 16, 13, 0.8);
+  background: var(--bg-dark);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c2b21;
-  border-radius: 4px;
+  background: #2D313A;
+  border-radius: 10px;
+}
+
+button, input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
